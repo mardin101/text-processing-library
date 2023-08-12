@@ -78,9 +78,20 @@ class WordprocessingApplicationTests {
 		
 		assertEquals(
 			result.get(0).getWord(), 
-			processor.calculateMostFrequentNWord(value, 2).get(0).getWord()
+			processor.calculateMostFrequentNWord(value, 8).get(0).getWord()
 		);
-//		assertEquals(result, processor.calculateMostFrequentNWord(value,  2));
+		
+		result.add(new Word("dog", 1));
+		result.add(new Word("fox", 1));
+		
+//		assertEquals(
+//				result.get(3).getWord(), 
+//				processor.calculateMostFrequentNWord(value, 4).get(3).getWord()
+//			);
+//		assertEquals(
+//				result.get(4).getWord(), 
+//				processor.calculateMostFrequentNWord(value, 5).get(4).getWord()
+//			);
 	}
 	
 	private TextProcessor getProcessor() {

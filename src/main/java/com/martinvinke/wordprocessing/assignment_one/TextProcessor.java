@@ -1,7 +1,6 @@
 package com.martinvinke.wordprocessing.assignment_one;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -41,50 +40,24 @@ public class TextProcessor implements WordFrequencyAnalyzer {
 	@Override
 	public int calculateHighestFrequencyForWord(String text, String word) {
 		String[] words = sanitize(text);
-		HashMap<String, Word> wordsByFrequency = new HashMap<String, Word>();
+		Map<String, Integer> wordsByFrequency = mapWordsByFrequency(words);
 		
-		if (words.length == 1) {
-			return 0;
-		}
-		
-		for (String currentWord : words) {
-			Word wordFrequency = null;
-			if (!isWord(currentWord)) {
-				continue;
-			}
-			
-			if (wordsByFrequency.containsKey(currentWord)) {
-				wordFrequency = wordsByFrequency.get(currentWord);
-			} else {
-				wordFrequency = new Word(currentWord);
-				wordsByFrequency.put(currentWord, wordFrequency);
-			}
-			
-			wordFrequency.incrementFrequency();
-		}
-		
-		return wordsByFrequency.getOrDefault(word, new Word("dummy", 0)).getFrequency();
+		return wordsByFrequency.getOrDefault(word, 0);
 	}
 
 	@Override
 	public List<WordFrequency> calculateMostFrequentNWord(String text, int n) {
 		String[] words = sanitize(text);
 
-		Map<String, Integer> wordFrequencyMap = new LinkedHashMap<>();
-
-		for (String word : words) {
-			if (isWord(word)) {
-				wordFrequencyMap.put(word, wordFrequencyMap.getOrDefault(word, 0) + 1);	
-			}
-		}
+		Map<String, Integer> wordFrequencyMap = mapWordsByFrequency(words);
 		
 		List<WordFrequency> result = wordFrequencyMap.entrySet().stream()
 			    .map(item -> new Word(item.getKey(), item.getValue()))
 			    .limit(n)
 			    .collect(Collectors.toList());
 		
-		result.sort((word1, word2) -> Integer.compare(word2.getFrequency(), word1.getFrequency()));
-		
+		result.sort(this::compareWords);
+	
 		return result;
 	}
 	
@@ -99,7 +72,26 @@ public class TextProcessor implements WordFrequencyAnalyzer {
 		}
 		
 		return mostFrequentWord;
+	}
+	
+	private Map<String, Integer> mapWordsByFrequency(String[] words) {
+		Map<String, Integer> wordFrequencyMap = new HashMap<>();
 		
+		for (String word : words) {
+			if (isWord(word)) {
+				wordFrequencyMap.put(word, wordFrequencyMap.getOrDefault(word, 0) + 1);	
+			}
+		}
+		
+		return wordFrequencyMap;
+	}
+	
+	private int compareWords(WordFrequency word1, WordFrequency word2) {
+		if (word1.getFrequency() == word2.getFrequency()) {
+			return word1.getWord().compareTo(word2.getWord());
+		}
+
+		return Integer.compare(word2.getFrequency(), word1.getFrequency());
 	}
 	
 	private String[] sanitize(String text) {
