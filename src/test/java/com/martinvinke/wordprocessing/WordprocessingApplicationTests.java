@@ -71,27 +71,13 @@ class WordprocessingApplicationTests {
 	@Test
 	void itReturnsAListOfWordFrequencies() {
 		String value = "the brown fox jumps over the lazy dog";
-		List<WordFrequency> result = new ArrayList<WordFrequency>();
-		result.add(new Word("the", 2));
-		result.add(new Word("brown", 1));
+		List<WordFrequency> expectedResult = new ArrayList<WordFrequency>();
+		expectedResult.add(new Word("the", 2));
+		expectedResult.add(new Word("brown", 1));
 		TextProcessor processor = getProcessor();
-		
-		assertEquals(
-			result.get(0).getWord(), 
-			processor.calculateMostFrequentNWord(value, 8).get(0).getWord()
-		);
-		
-		result.add(new Word("dog", 1));
-		result.add(new Word("fox", 1));
-		
-//		assertEquals(
-//				result.get(3).getWord(), 
-//				processor.calculateMostFrequentNWord(value, 4).get(3).getWord()
-//			);
-//		assertEquals(
-//				result.get(4).getWord(), 
-//				processor.calculateMostFrequentNWord(value, 5).get(4).getWord()
-//			);
+		List<WordFrequency> actualResult = processor.calculateMostFrequentNWord(value, 4);
+		assertEquals(expectedResult.get(0).getWord(), actualResult.get(0).getWord());
+		assertEquals(4, actualResult.size());
 	}
 	
 	private TextProcessor getProcessor() {
