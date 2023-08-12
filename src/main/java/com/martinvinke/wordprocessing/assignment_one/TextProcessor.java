@@ -1,5 +1,5 @@
 package com.martinvinke.wordprocessing.assignment_one;
-import java.util.Arrays;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -69,23 +69,21 @@ public class TextProcessor implements WordFrequencyAnalyzer {
 	@Override
 	public List<WordFrequency> calculateMostFrequentNWord(String text, int n) {
 		String[] words = sanitize(text);
-		String[] sortedWords = Arrays.stream(words)
-				.sorted()
-			    .filter(this::isWord)
-			    .toArray(String[]::new);
-		
+
 		Map<String, Integer> wordFrequencyMap = new LinkedHashMap<>();
 
-		for (String word : sortedWords) {
-		    wordFrequencyMap.put(word, wordFrequencyMap.getOrDefault(word, 0) + 1);
-		    if (wordFrequencyMap.size() == n) {
-		        break;
-		    }
+		for (String word : words) {
+			if (isWord(word)) {
+				wordFrequencyMap.put(word, wordFrequencyMap.getOrDefault(word, 0) + 1);	
+			}
 		}
 		
 		List<WordFrequency> result = wordFrequencyMap.entrySet().stream()
 			    .map(item -> new Word(item.getKey(), item.getValue()))
+			    .limit(n)
 			    .collect(Collectors.toList());
+		
+		result.sort((word1, word2) -> Integer.compare(word2.getFrequency(), word1.getFrequency()));
 		
 		return result;
 	}
